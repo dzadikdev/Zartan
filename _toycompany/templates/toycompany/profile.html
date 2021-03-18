@@ -1,0 +1,134 @@
+{% extends templatename+"/template.html" %}
+
+{% block content %}
+ <section class="bg-light py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card border-bottom">
+                    <div class="card-header">Account</div>
+                    <div class="card-body">
+                          <form class="form-horizontal" action='updateuserinfo' method="POST">
+                              <div class="form-group input-group">
+                              	<div class="input-group-prepend">
+                          		    <span class="input-group-text">Username </span>
+                          		  </div>
+                                <input name="username" class="form-control" id="username" type="text" value="{{ user_info2['profile']['login']  }}">
+                              </div>
+
+                              {% if user_info2['profile']["parentemail"] %}
+                              <div class="form-group input-group">
+                              	<div class="input-group-prepend">
+                          		    <span class="input-group-text">Parent Email </span>
+                          		  </div>
+                                <input name="parentemail" class="form-control" id="parentemail" type="text" value="{{ user_info2['profile']['parentemail']  }}">
+                              </div>
+                              {% endif %}
+
+                              {% if user_info2['profile']["dob"] %}
+                              <div class="form-group input-group">
+                              	<div class="input-group-prepend">
+                          		    <span class="input-group-text">Date of Birth </span>
+                          		  </div>
+                                <input name="dob" class="form-control" id="dob" type="text" value="{{ user_info2['profile']['dob']  }}">
+                              </div>
+                              {% endif %}
+
+                              {% if user_info2['profile']["gender"] %}
+                              <div class="form-group input-group">
+                              	<div class="input-group-prepend">
+                          		    <span class="input-group-text">Gender </span>
+                          		  </div>
+                                <input name="gender" class="form-control" id="gender" type="text" value="{{ user_info2['profile']['gender']  }}">
+                              </div>
+                              {% endif %}
+
+                              <input id="user_id" name="user_id" class="form-control" type="hidden" value="{{ user_info2['id'] }}">
+                          </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-bottom">
+                    <div class="card-header">Access Support Chat</div>
+                    <div class="card-body">
+                        <button type="button" class="btn btn-primary btn-block" onclick="showconset();" >Access Chat</button>
+                    </div>
+                </div><br>
+                <div class="card border-bottom">
+                    <div class="card-header">Shop at our Store</div>
+                    <div class="card-body">
+                        <button type="button" class="btn btn-primary btn-block" onclick="ToKey()" >Go Shopping</button>
+                    </div>
+                    <script>
+                    function ToKey(){
+                        window.open('https://udp-mattel-demo-5c4.oktapreview.com/home/oidc_client/0oaxdj4k2018GzLi60h7/aln5z7uhkbM6y7bMy0g7', '_blank');
+                    }
+                    </script>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal fade" id="consentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <form action="/toycompany/registration-parent" method="POST">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalCenterTitle">Need Parents Permission</h5><br>
+                    </div>
+                    <div class="modal-body" id="mfamodalbody">
+                        <div class="form-group col-md-12"><label for="parentemail">Please provide your parents email</label>
+                            <input class="form-control rounded-pill" name="parentemail" id="parentemail" type="email" oninput="emailentered()"  />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" type="submit" id="confirm" disabled>Submit</button>
+                        <button class="btn btn-primary" type="button" onclick="closepopup()">Cancel</button>
+                    </div>
+            </div>
+        </div>
+        </form>
+    </div>
+    <script type="text/javascript">
+
+        function showconset()
+        {
+            {% if user_info2["profile"]["isminor"] == "True" and user_info2["profile"]["parentemail"] is not defined %}
+                $("#consentModal").modal("show");
+            {% else %}
+                window.location.href = "/toycompany/chat";
+            {% endif %}
+        }
+        function closepopup() {
+            console.log("closepopup()");
+            $("#consentModal").modal("hide");
+        }
+
+
+        function emailentered() {
+                console.log("emailentered()");
+                if($("#parentemail").val().length > 4)
+                {
+                    $("#confirm").prop('disabled', false);
+                }
+                else
+                {
+                    $("#confirm").prop('disabled', true);
+                }
+        }
+    </script>
+
+    <style>
+        .modal-dialog {
+            max-width: 800;
+        }
+    </style>
+</section>
+
+
+{% endblock %}
+
+{% block footer %}
+{% endblock %}
